@@ -1,0 +1,818 @@
+/* Estilos corporativos para Trestiq Marketplace */
+:root {
+    --primary: #2c55a5;
+    --primary-light: #3c6dd0;
+    --primary-dark: #1a407a;
+    --secondary: #4b9dd1;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #343a40;
+    --gray: #6c757d;
+    --gray-light: #e9ecef;
+    --white: #ffffff;
+    --black: #000000;
+    --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --border-radius: 0.25rem;
+    --transition: all 0.2s ease-in-out;
+    }
+    
+    /* Reset y estilos generales */
+    body {
+    font-family: var(--font-main);
+    color: var(--dark);
+    background-color: #f7f9fc;
+    line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--dark);
+    }
+    
+    /* Navegación */
+    .navbar {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    box-shadow: var(--box-shadow);
+    background-color: var(--white);
+    }
+    
+    /* Contenedor principal limitado - CLAVE PARA ARREGLAR EL ANCHO */
+    .container-fluid {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    }
+    
+    /* IMPORTANTE: Limitar el ancho del formulario */
+    .col-lg-8 {
+    max-width: 800px;
+    margin: 0 auto;
+    }
+    
+    /* Mejoras para tarjetas */
+    .card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+    background-color: var(--white);
+    }
+    
+    .card:hover {
+    box-shadow: var(--box-shadow-lg);
+    }
+    
+    .card-header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--gray-light);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    }
+    
+    .card-body {
+    padding: 1.5rem;
+    }
+    
+    /* NUEVA SECCIÓN: Agrupar secciones relacionadas */
+    .metrics-group {
+    border: 1px solid var(--gray-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    background-color: white;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    }
+    
+    .metrics-group:hover {
+    box-shadow: var(--box-shadow-lg);
+    }
+    
+    .metrics-group-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary-light);
+    }
+    
+    .metrics-group-title i {
+    margin-right: 10px;
+    color: var(--primary);
+    }
+    
+    /* Secciones del formulario mejoradas */
+    .section-card {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }
+    
+    /* Títulos de sección mejorados */
+    .section-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--gray-light);
+    display: flex;
+    align-items: center;
+    font-size: 1.15rem;
+    }
+    
+    .section-title i {
+    margin-right: 10px;
+    color: var(--primary);
+    }
+    
+    /* Campos de formulario mejorados */
+    .form-group {
+    margin-bottom: 2.5rem;
+    position: relative;
+    }
+    
+    .form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    display: block;
+    font-size: 0.95rem;
+    }
+    
+    .form-control {
+    border: 1px solid #e4e6ef;
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    transition: all 0.2s ease-in-out;
+    background-color: #f9fafc;
+    width: 100%;
+    font-size: 0.95rem;
+    height: 46px; /* Altura fija para todos los inputs */
+    }
+    
+    .form-control:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(44, 85, 165, 0.15);
+    background-color: var(--white);
+    }
+    
+    .form-control:hover {
+    border-color: var(--primary-light);
+    background-color: #f5f7fc;
+    }
+    
+    .form-control::placeholder {
+    color: #adb5bd;
+    opacity: 0.8;
+    }
+    
+    /* Regla específica para textareas */
+    textarea.form-control {
+    min-height: 150px; /* Aumentar altura para área de descripción */
+    height: auto;
+    resize: vertical; /* Permitir al usuario ajustar si es necesario */
+    }
+    
+    /* Mantener el estilo de validación original */
+    .validation-message {
+    display: none; /* Evitar mensajes duplicados de validación */
+    }
+    
+    /* Mostrar solo el contador de caracteres */
+    .character-counter {
+    display: block; /* Asegurar que el contador siga visible */
+    }
+    
+    
+    /* MEJORADO: Input groups con mejor alineación */
+    .input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center; /* Cambiado de stretch a center */
+    width: 100%;
+    margin-bottom: 0.25rem;
+    }
+    
+    /* MEJORADO: Estilo consistente para el input-group-text con símbolos */
+    .input-group-text {
+    background-color: #f1f3f9;
+    border: 1px solid #e4e6ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 46px; /* Altura fija igual a los inputs */
+    padding: 0 12px; /* Cambiado para ser más preciso */
+    border-radius: 6px 0 0 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--primary);
+    line-height: 1; /* Añadido para mejor alineación */
+    }
+    
+    /* Asegurar que el símbolo esté bien centrado */
+    .input-group-text i,
+    .input-group-text span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    font-size: 0.85rem;
+    }
+    
+    /* Si hay texto junto al icono, añadir margen específico */
+    .input-group-text i + span {
+    margin-left: 8px;
+    }
+    
+    /* MEJORADO: Asegurar que el form-control en input-group se expande correctamente */
+    .input-group > .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    margin-bottom: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    height: 46px; /* Añadido para asegurar altura consistente */
+    line-height: 46px; /* Añadido para mejor alineación */
+    }
+    
+    /* Estilo específico para el símbolo de moneda */
+    .simbolo-moneda {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    font-weight: 500;
+    height: 46px;
+    line-height: 1;
+    }
+    
+    /* MEJORADO: Ajuste específico para campos de precio */
+    input[type="number"].form-control.precio {
+    height: 46px;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 15px; /* Aumentado de 10px */
+    padding-left: 10px; /* Añadido para más espacio */
+    box-sizing: border-box;
+    text-align: right;
+    width: 100%; /* Asegurar que ocupe todo el espacio disponible */
+    }
+    
+    
+    /* MEJORADO: Específicamente para inputs de tipo date y number */
+    input.form-control[type="date"],
+    input.form-control[type="number"] {
+    min-height: 46px; /* Altura consistente */
+    padding-right: 10px;
+    flex: 1;
+    display: block;
+    width: 100%;
+    }
+    
+    /* NUEVA SECCIÓN: Mejorar la visualización de indicadores de validación */
+    .valid-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--success);
+    margin-top: 0.5rem;
+    }
+    
+    .valid-indicator i {
+    margin-right: 5px;
+    }
+    
+    /* CORRECCIÓN: Unificar estilos de validación y contadores de caracteres */
+    .character-counter {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+    
+    .character-counter .current {
+    font-weight: 500;
+    }
+    
+    .character-counter .limit {
+    opacity: 0.8;
+    }
+    
+    .validation-message {
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    padding-left: 0.25rem;
+    border-left: 2px solid;
+    }
+    
+    .validation-message.error {
+    color: var(--danger);
+    border-color: var(--danger);
+    }
+    
+    .validation-message.warning {
+    color: var(--warning);
+    border-color: var(--warning);
+    }
+    
+    .validation-message.success {
+    color: var(--success);
+    border-color: var(--success);
+    }
+    
+    .validation-message.info {
+    color: var(--primary);
+    border-color: var(--primary);
+    }
+    
+    .validation-help {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.25rem;
+    font-style: italic;
+    }
+    
+    /* Badges y progress */
+    .badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    border-radius: 4px;
+    }
+    
+    .badge-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    }
+    
+    .badge-light {
+    background-color: var(--gray-light);
+    color: var(--gray);
+    }
+    
+    .badge-warning {
+    background-color: var(--warning);
+    color: var(--dark);
+    }
+    
+    .step-badge {
+    transition: var(--transition);
+    cursor: pointer;
+    }
+    
+    .progress {
+    height: 0.5rem;
+    background-color: var(--gray-light);
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    }
+    
+    .progress-bar {
+    background-color: var(--primary);
+    transition: width 0.6s ease;
+    }
+    
+    /* Botones mejorados */
+    .btn {
+    padding: 0.65rem 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.05);
+    height: 46px; /* Altura consistente con inputs */
+    }
+    
+    .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border: none;
+    color: white;
+    }
+    
+    .btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(44, 85, 165, 0.3);
+    }
+    
+    .btn-secondary {
+    background-color: var(--gray);
+    color: var(--white);
+    }
+    
+    .btn-secondary:hover {
+    background-color: #5a6268;
+    color: var(--white);
+    transform: translateY(-2px);
+    }
+    
+    .btn-light {
+    background-color: var(--light);
+    border: 1px solid var(--gray-light);
+    color: var(--dark);
+    }
+    
+    .btn-light:hover {
+    background-color: #e2e6ea;
+    border-color: #dae0e5;
+    }
+    
+    .btn i {
+    margin-right: 8px;
+    font-size: 0.9em;
+    }
+    
+    /* Previsualización de imágenes */
+    .image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+    }
+    
+    .image-preview-item {
+    position: relative;
+    border: 1px solid var(--gray-light);
+    border-radius: var(--border-radius);
+    padding: 5px;
+    display: inline-block;
+    }
+    
+    .remove-image {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    line-height: 22px;
+    cursor: pointer;
+    font-size: 12px;
+    }
+    
+    /* Custom file input */
+    .custom-file {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 46px; /* Altura consistente */
+    margin-bottom: 0;
+    }
+    
+    .custom-file-input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 46px; /* Altura consistente */
+    margin: 0;
+    opacity: 0;
+    }
+    
+    .custom-file-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    height: 46px; /* Altura consistente */
+    padding: 0.85rem 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    }
+    
+    .custom-file-label::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 0.75rem;
+    color: var(--white);
+    content: "Examinar";
+    background-color: var(--primary);
+    border-left: inherit;
+    border-radius: 0 6px 6px 0;
+    }
+    
+    /* Custom checkboxes */
+    .custom-control {
+    position: relative;
+    display: block;
+    min-height: 1.5rem;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    }
+    
+    .custom-control-input {
+    position: absolute;
+    left: 0;
+    z-index: -1;
+    width: 1rem;
+    height: 1.25rem;
+    opacity: 0;
+    }
+    
+    .custom-control-label {
+    position: relative;
+    margin-bottom: 0;
+    vertical-align: top;
+    cursor: pointer;
+    padding-left: 10px;
+    }
+    
+    .custom-control-label::before {
+    position: absolute;
+    top: 0.25rem;
+    left: -1.5rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+    content: "";
+    background-color: #fff;
+    border: 1px solid #adb5bd;
+    border-radius: 0.25rem;
+    }
+    
+    .custom-control-label::after {
+    position: absolute;
+    top: 0.25rem;
+    left: -1.5rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    content: "";
+    background: no-repeat 50% / 50% 50%;
+    }
+    
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    }
+    
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+    }
+    
+    /* Mensajes de ayuda */
+    .help-text, .form-text.text-muted {
+    color: var(--gray);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    display: block;
+    }
+    
+    /* Validación de formularios */
+    .is-valid {
+    border-color: var(--success);
+    }
+    
+    .is-invalid {
+    border-color: var(--danger);
+    }
+    
+    .valid-feedback {
+    color: var(--success);
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    }
+    
+    .valid-feedback i {
+    margin-right: 5px;
+    }
+    
+    .invalid-feedback {
+    color: var(--danger);
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    display: block;
+    }
+    
+    .invalid-feedback i {
+    margin-right: 5px;
+    }
+    
+    /* MEJORADO: Arreglar la visualización de input-group-prepend */
+    .input-group-prepend {
+    display: flex;
+    margin-right: -1px;
+    }
+    
+    .input-group-prepend .input-group-text {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    }
+    
+    /* MEJORADO: Mejorar la apariencia del campo de precio */
+    .input-group-prepend + .form-control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    }
+    
+    /* MEJORADO: Eliminar efectos no deseados en navegadores webkit */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    }
+    
+    /* Firefox input number */
+    input[type="number"] {
+    appearance: textfield; /* Cambiado de -moz-appearance a appearance para mayor compatibilidad */
+    -moz-appearance: textfield;
+    }
+    
+    /* MEJORADO: Mejorar la visualización de inputs de tipo date en diferentes navegadores */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    display: block;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%232c55a5" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    }
+    
+    /* AÑADIDO: Tooltip para campos informativos */
+    .tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--gray-light);
+    color: var(--gray);
+    font-size: 10px;
+    margin-left: 5px;
+    cursor: help;
+    }
+    
+    .tooltip-icon:hover {
+    background-color: var(--primary-light);
+    color: var(--white);
+    }
+    
+    
+    /* CORREGIDO: Aumentar el ancho del campo de precio */
+    .input-group.precio-venta {
+    max-width: 350px; /* Aumentado de 250px para mejor visualización */
+    }
+    
+    /* MEJORADO: Estilo para el símbolo de moneda */
+    .input-group-text.simbolo-moneda {
+    min-width: 45px; /* Aumentado de 35px */
+    justify-content: center;
+    font-weight: 500;
+    font-size: 1rem; /* Añadido para mejor visibilidad */
+    }
+    
+    /* Ajustes responsivos */
+    @media (max-width: 768px) {
+    .section-card,
+    .metrics-group {
+    padding: 1rem;
+    }
+    
+    .card-body {
+    padding: 1.25rem;
+    }
+    
+    .btn {
+    padding: 0.4rem 1rem;
+    }
+    
+    /* Mantener el formulario centrado en móviles */
+    .container-fluid {
+    padding-left: 15px;
+    padding-right: 15px;
+    }
+    
+    /* MEJORADO: Mejorar visualización de input-group en móviles */
+    .input-group {
+    flex-wrap: nowrap;
+    }
+    
+    .input-group-text {
+    padding: 0.6rem;
+    }
+    
+    /* AÑADIDO: Mejorar disposición de labels en móviles */
+    .form-group label {
+    font-size: 0.9rem;
+    }
+    
+    /* AÑADIDO: Reducir espacio entre grupos en móviles */
+    .form-group {
+    margin-bottom: 2rem;
+    }
+    }
+    
+    /* Ajustes para pantallas muy grandes */
+    @media (min-width: 1600px) {
+    .container-fluid {
+    max-width: 1400px;
+    }
+    
+    .col-lg-8 {
+    max-width: 900px;
+    }
+    }
+    
+    /* Ajustes para el contenedor principal */
+    #wrapper {
+    display: flex;
+    }
+    
+    #content-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+    background-color: #f7f9fc;
+    }
+    
+    #content {
+    flex: 1 0 auto;
+    }
+    
+    /* MEJORADO: Añadir soporte para Firefox input date */
+    @-moz-document url-prefix() {
+    input[type="date"] {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+    }
+    }
+    
+    /* AÑADIDO: Espaciado entre campos relacionados */
+    .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -10px;
+    margin-left: -10px;
+    }
+    
+    .form-row > .col,
+    .form-row > [class*="col-"] {
+    padding-right: 10px;
+    padding-left: 10px;
+    }
+    
+    /* AÑADIDO: Mejor separación entre secciones */
+    hr.section-divider {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border: 0;
+    border-top: 1px solid var(--gray-light);
+    }
+    
+    /* AÑADIDO: Estilo para subtítulos de sección */
+    .subsection-title {
+    font-size: 1rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    font-weight: 500;
+    }  
