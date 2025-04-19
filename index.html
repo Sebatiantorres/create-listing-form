@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
     <title>Crear Anuncio - Trestiq Marketplace</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body id="page-top">
     <div id="wrapper">
@@ -67,8 +67,8 @@ Borrador
                     <i class="fas fa-heading mr-2"></i>Detalles Principales
                 </div>
                 <div class="form-group">
-                    <label>Título del Activo</label>
-                    <input type="text" class="form-control form-control-lg" name="title" required
+                    <label class="">Título del Activo</label>
+                    <input type="text" class="form-control form-control-lg " name="title" required
                         minlength="20" maxlength="200"
                         placeholder="Ej: Sitio Web de Comercio Electrónico Rentable">
                     <small class="help-text">
@@ -163,11 +163,11 @@ Borrador
                 <label>Fecha de Creación</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">
+                        <span class="input-group-text ">
                             <i class="fas fa-calendar-alt"></i>
                         </span>
                     </div>
-                    <input type="date" class="form-control" name="creation_date" required>
+                    <input type="date" class="form-control " name="creation_date" required>
                 </div>
                 <small class="help-text">Fecha en que se creó originalmente la propiedad</small>
             </div>
@@ -177,11 +177,11 @@ Borrador
                 <label>Precio de Venta (USD)</label>
                 <div class="input-group precio-venta">
                     <div class="input-group-prepend">
-                        <span class="input-group-text simbolo-moneda">
+                        <span class="input-group-text simbolo-moneda ">
                             <i class="fas fa-dollar-sign"></i>
                         </span>
                     </div>
-                    <input type="text" class="form-control precio" name="price" required min="0" step="0.01" placeholder="Ej: 4500.00">
+                    <input type="text" class="form-control precio " name="price" required min="0" step="0.01" placeholder="Ej: 4500.00">
                 </div>
                 <small class="help-text">Ingrese el precio de venta deseado para el activo</small>
             </div>
@@ -196,7 +196,7 @@ Borrador
 
 <!-- Paso 2: Métricas -->
         <div class="step-content" id="step2">
-            <div class="card shadow mb-4">
+            <div class="card shadow mb-4 col-md-6">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-chart-line mr-2"></i>Métricas del Activo
@@ -214,9 +214,9 @@ Borrador
                                     <label>Ingresos Mensuales (USD)</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">$</span>
+                                            <span class="input-group-text ">$</span>
                                         </div>
-                                        <input type="number" class="form-control" name="monthly_revenue" min="0" required/>
+                                        <input type="number" class="form-control " name="monthly_revenue" min="0" required/>
                                     </div>
                                     <small class="form-text text-muted">Promedio de ingresos mensuales de los últimos 6 meses</small>
                                 </div>
@@ -226,9 +226,9 @@ Borrador
                                     <label>Ingresos Anuales (USD)</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">$</span>
+                                            <span class="input-group-text ">$</span>
                                         </div>
-                                        <input type="number" class="form-control" name="annual_revenue" min="0" required/>
+                                        <input type="number" class="form-control " name="annual_revenue" min="0" required/>
                                     </div>
                                     <small class="form-text text-muted">Total de ingresos en los últimos 12 meses</small>
                                 </div>
@@ -241,9 +241,9 @@ Borrador
                                     <label>Beneficio Mensual (USD)</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">$</span>
+                                            <span class="input-group-text ">$</span>
                                         </div>
-                                        <input type="number" class="form-control" name="monthly_profit" min="0" required/>
+                                        <input type="number" class="form-control " name="monthly_profit" min="0" required/>
                                     </div>
                                     <small class="form-text text-muted">Beneficio neto mensual después de todos los gastos</small>
                                 </div>
@@ -253,9 +253,9 @@ Borrador
                                     <label>ROI (%)</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text">%</span>
+                                            <span class="input-group-text ">%</span>
                                         </div>
-                                        <input type="number" class="form-control" name="roi" min="0" step="0.01" required/>
+                                        <input type="number" class="form-control " name="roi" min="0" step="0.01" required/>
                                     </div>
                                     <small class="form-text text-muted">Retorno de inversión calculado en porcentaje</small>
                                 </div>
@@ -266,7 +266,7 @@ Borrador
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Múltiplo de Ingresos</label>
-                                    <input type="number" class="form-control" name="revenue_multiple" readonly step="0.01"/>
+                                    <input type="number" class="form-control " name="revenue_multiple" readonly step="0.01"/>
                                     <small class="form-text text-muted">
                                         Calculado automáticamente (Precio ÷ Ingresos mensuales)
                                     </small>
@@ -275,7 +275,7 @@ Borrador
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Múltiplo de Beneficios</label>
-                                    <input type="number" class="form-control" name="profit_multiple" readonly step="0.01"/>
+                                    <input type="number" class="form-control " name="profit_multiple" readonly step="0.01"/>
                                     <small class="form-text text-muted">
                                         Calculado automáticamente (Precio ÷ Beneficio mensual)
                                     </small>
@@ -520,8 +520,8 @@ Borrador
             <button type="button" class="btn btn-secondary" id="prevStepBtn" style="display: none;">
                 <i class="fas fa-arrow-left"></i> Anterior
             </button>
-            <div>
-                <button type="button" class="btn btn-light mr-2" id="saveDraftBtn">
+            <div class="d-button-flex">
+                <button type="button" class="btn btn-light mr-2 border-primary" id="saveDraftBtn">
                     <i class="fas fa-save"></i> Guardar Borrador
                 </button>
                 <button type="button" class="btn btn-primary" id="nextStepBtn">

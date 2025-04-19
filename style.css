@@ -39,7 +39,20 @@
     box-shadow: var(--box-shadow);
     background-color: var(--white);
     }
-    
+    .navbar .d-flex.align-items-center {
+        padding: 1rem 2rem; /* Add horizontal padding */
+    }
+    .navbar .h3.mb-0.text-gray-800{
+        font-size: 1.8rem;
+    }
+
+    /* Limit the width of the form in the wrapper */
+    .container-fluid {
+      max-width: 1100px;
+    }
+    .col-lg-8 {
+        max-width: 750px; /* Reduced from 800px */
+    }
     /* Contenedor principal limitado - CLAVE PARA ARREGLAR EL ANCHO */
     .container-fluid {
     max-width: 1200px;
@@ -156,17 +169,17 @@
     display: block;
     font-size: 0.95rem;
     }
-    
+
     .form-control {
     border: 1px solid #e4e6ef;
     border-radius: 6px;
-    padding: 0.85rem 1rem;
+    padding: 0rem 1rem;
     transition: all 0.2s ease-in-out;
     background-color: #f9fafc;
     width: 100%;
     font-size: 0.95rem;
     height: 46px; /* Altura fija para todos los inputs */
-    }
+}
     
     .form-control:focus {
     border-color: var(--primary-light);
@@ -178,10 +191,11 @@
     border-color: var(--primary-light);
     background-color: #f5f7fc;
     }
-    
+
     .form-control::placeholder {
     color: #adb5bd;
     opacity: 0.8;
+    padding-left: 0.5rem;
     }
     
     /* Regla específica para textareas */
@@ -189,6 +203,7 @@
     min-height: 150px; /* Aumentar altura para área de descripción */
     height: auto;
     resize: vertical; /* Permitir al usuario ajustar si es necesario */
+    padding: 0.5rem 1rem; /* Añadir relleno para mejor apariencia */
     }
     
     /* Mantener el estilo de validación original */
@@ -220,8 +235,8 @@
     align-items: center;
     justify-content: center;
     min-width: 42px;
-    height: 46px; /* Altura fija igual a los inputs */
-    padding: 0 12px; /* Cambiado para ser más preciso */
+    height: 38px;
+    padding: 0.5rem 0.75rem;
     border-radius: 6px 0 0 6px;
     font-size: 0.9rem;
     font-weight: 500;
@@ -252,11 +267,16 @@
     min-width: 0;
     margin-bottom: 0;
     border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    height: 46px; /* Añadido para asegurar altura consistente */
+    border-bottom-left-radius: 0;    
+    height: 36px; /* Añadido para asegurar altura consistente */
     line-height: 46px; /* Añadido para mejor alineación */
     }
-    
+    .input-group > .form-control {
+        width: 250px;
+    }
+    .form-control {
+        width: 100%;
+        }
     /* Estilo específico para el símbolo de moneda */
     .simbolo-moneda {
     display: flex;
@@ -270,7 +290,7 @@
     
     /* MEJORADO: Ajuste específico para campos de precio */
     input[type="number"].form-control.precio {
-    height: 46px;
+    height: 38px;
     padding-top: 0;
     padding-bottom: 0;
     padding-right: 15px; /* Aumentado de 10px */
@@ -278,20 +298,40 @@
     box-sizing: border-box;
     text-align: right;
     width: 100%; /* Asegurar que ocupe todo el espacio disponible */
-    }
-    
-    
-    /* MEJORADO: Específicamente para inputs de tipo date y number */
-    input.form-control[type="date"],
-    input.form-control[type="number"] {
-    min-height: 46px; /* Altura consistente */
-    padding-right: 10px;
-    flex: 1;
-    display: block;
-    width: 100%;
-    }
-    
-    /* NUEVA SECCIÓN: Mejorar la visualización de indicadores de validación */
+}
+
+/* Reduce input height */
+.section-card:has(.fa-clock) .form-control,
+.input-group-text {
+    height: 38px; /* Reduce input height */
+    padding: 0.5rem 0.75rem; /* Adjust padding */
+
+
+    box-sizing: border-box;
+    text-align: right;
+    width: 100%; /* Asegurar que ocupe todo el espacio disponible */
+}
+/* Reduce spacing between labels and inputs */
+.section-card:has(.fa-clock) .form-group {
+    margin-bottom: 1.5rem; /* Reduce bottom margin */
+}
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control:not(textarea) {
+    height: 38px;
+}
+
+.input-group-text {
+    height: 38px;
+    padding: 0.5rem 0.75rem;
+}
+
+.input-group > .form-control {
+    width: 250px;
+}
+
     .valid-indicator {
     display: flex;
     align-items: center;
@@ -436,21 +476,34 @@
     }
     
     .btn-light {
-    background-color: var(--light);
+    background-color: rgb(211, 213, 216);
     border: 1px solid var(--gray-light);
     color: var(--dark);
     }
     
     .btn-light:hover {
-    background-color: #e2e6ea;
-    border-color: #dae0e5;
+    transition: 300ms;
+    border-color: #4d4f52;
     }
     
     .btn i {
     margin-right: 8px;
     font-size: 0.9em;
     }
+    .d-button-flex {
+        display: flex;
+        align-items: center; /* Alinear verticalmente los botones */
+        gap: 10px; /* Espaciado entre botones */
+    }
     
+    .d-button-flex .btn {
+        height: 46px; /* Asegurar altura uniforme */
+        line-height: 1.5; /* Asegurar alineación del texto */
+        padding: 0.65rem 1.5rem; /* Ajustar relleno interno */
+        display: flex;
+        align-items: center; /* Centrar contenido dentro del botón */
+        justify-content: center;
+    }
     /* Previsualización de imágenes */
     .image-preview {
     display: flex;
@@ -595,6 +648,18 @@
     .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
     }
+
+
+    /*
+    **Explicación:**
+ * Añadir relleno a `custom-control-label` para separar la etiqueta del checkbox.
+    * Cambiar el borde del checkbox cuando no está marcado.
+    * Cambiar el color del checkbox cuando está marcado.
+    * Añadir una sombra azul cuando la casilla está enfocada
+ * Cambiar el icono dentro de la casilla.
+    * Añadir un radio de borde a la casilla.
+    
+    */
     
     /* Mensajes de ayuda */
     .help-text, .form-text.text-muted {
@@ -612,7 +677,20 @@
     .is-invalid {
     border-color: var(--danger);
     }
-    
+
+    /**   **Explanation:**
+    *   `!important`: makes the red border priority.
+    *   `box-shadow`: Add a red box shadow when error is present.*/
+    .is-invalid {
+        border-color: var(--danger) !important; /* Strong red border */
+        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25); /* Red shadow */
+    }
+      
+    .invalid-feedback {
+        color: var(--danger);
+        margin-top: 0.25rem;
+        font-size: 0.8rem;
+    }
     .valid-feedback {
     color: var(--success);
     margin-top: 0.25rem;
@@ -647,6 +725,7 @@
     .input-group-prepend .input-group-text {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    padding: 8px 16px;
     }
     
     /* MEJORADO: Mejorar la apariencia del campo de precio */
@@ -710,6 +789,19 @@
     justify-content: center;
     font-weight: 500;
     font-size: 1rem; /* Añadido para mejor visibilidad */
+    }
+
+    .section-card:has(.fa-clock) .form-control,
+    .input-group-text {
+        height: 38px; /* Reduce input height */
+        padding: 0.5rem 0.75rem; /* Adjust padding */
+        /* Reduce spacing between labels and inputs */
+    .section-card:has(.fa-clock) .form-group {
+        margin-bottom: 1.5rem; /* Reduce bottom margin */
+    }
+        box-sizing: border-box;
+        text-align: right;
+        width: 100%; /* Asegurar que ocupe todo el espacio disponible */
     }
     
     /* Ajustes responsivos */
@@ -815,4 +907,9 @@
     color: var(--gray);
     margin-bottom: 1rem;
     font-weight: 500;
-    }  
+}
+
+/* Reduce margin-bottom in form groups */
+.form-group {
+    margin-bottom: 1.5rem;
+}
