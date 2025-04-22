@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
+    <title>Métricas - Trestiq Marketplace</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="page-top" class="page-metricas">
+    <!-- Progress Sidebar -->
+    <div class="progress-sidebar">
+        <div class="progress-line" style="height: 50%;"></div>
+        <div class="progress-dot completed" style="top: 0%">
+            <span class="progress-label">Información Básica</span>
+        </div>
+        <div class="progress-dot active" style="top: 33.33%">
+            <span class="progress-label">Métricas</span>
+        </div>
+        <div class="progress-dot" style="top: 66.66%">
+            <span class="progress-label">Monetización</span>
+        </div>
+        <div class="progress-dot" style="top: 100%">
+            <span class="progress-label">Configuración</span>
+        </div>
+    </div>
+
+    <div id="wrapper">
+        
+        
+              <div id="content-wrapper" class="d-flex flex-column">
+<div id="content">
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+<i class="fa fa-bars"></i>
+</button>
+<div class="d-flex align-items-center">
+<i class="fas fa-plus-circle fa-2x text-primary mr-2"></i>
+<div>
+<h1 class="h3 mb-0 text-gray-800">Crear Nuevo Anuncio</h1>
+<small class="text-muted">Sistema de Publicación de Activos Digitales</small>
+</div>
+</div>
+<div class="ml-auto d-flex align-items-center">
+<span class="mr-2 d-none d-lg-inline text-gray-600 small">ID: <?php echo uniqid('LISTING-'); ?></span>
+<span class="badge badge-warning">
+<i class="fas fa-save mr-1"></i>
+Borrador
+</span>
+</div>
+</nav>
+
+<div class="container-fluid">
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<div class="card mb-4">
+<div class="card-body">
+<div class="progress mb-3">
+<div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+<div class="d-flex justify-content-between">
+<span class="badge badge-primary step-badge" id="stepBadge1">Información Básica</span>
+<span class="badge badge-primary step-badge" id="stepBadge2">Métricas</span>
+<span class="badge badge-light step-badge" id="stepBadge3">Monetización</span>
+<span class="badge badge-light step-badge" id="stepBadge4">Configuración</span>
+</div>
+</div>
+</div>
+
+<form id="listingForm" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+
+<div class="step-content" id="step2">
+    <div class="card shadow mb-4 col-md-6">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-chart-line mr-2"></i>Métricas del Activo
+            </h6>
+        </div>
+        <div class="card-body">
+            <!-- Métricas Financieras -->
+            <div class="section-card">
+                <div class="section-title">
+                    <i class="fas fa-dollar-sign mr-2"></i>Métricas Financieras
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ingresos Mensuales (USD)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text ">$</span>
+                                </div>
+                                <input type="number" class="form-control " name="monthly_revenue" min="0" required/>
+                            </div>
+                            <small class="form-text text-muted">Promedio de ingresos mensuales de los últimos 6 meses</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Ingresos Anuales (USD)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text ">$</span>
+                                </div>
+                                <input type="number" class="form-control " name="annual_revenue" min="0" required/>
+                            </div>
+                            <small class="form-text text-muted">Total de ingresos en los últimos 12 meses</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Beneficio Mensual (USD)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text ">$</span>
+                                </div>
+                                <input type="number" class="form-control " name="monthly_profit" min="0" required/>
+                            </div>
+                            <small class="form-text text-muted">Beneficio neto mensual después de todos los gastos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>ROI (%)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text ">%</span>
+                                </div>
+                                <input type="number" class="form-control " name="roi" min="0" step="0.01" required/>
+                            </div>
+                            <small class="form-text text-muted">Retorno de inversión calculado en porcentaje</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Múltiplo de Ingresos</label>
+                            <input type="number" class="form-control " name="revenue_multiple" readonly step="0.01"/>
+                            <small class="form-text text-muted">
+                                Calculado automáticamente (Precio ÷ Ingresos mensuales)
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Múltiplo de Beneficios</label>
+                            <input type="number" class="form-control " name="profit_multiple" readonly step="0.01"/>
+                            <small class="form-text text-muted">
+                                Calculado automáticamente (Precio ÷ Beneficio mensual)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas de Audiencia -->
+            <div class="section-card">
+                <div class="section-title">
+                    <i class="fas fa-users mr-2"></i>Métricas de Audiencia y Engagement
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tráfico Mensual Promedio</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-users"></i></span>
+                                </div>
+                                <input type="number" class="form-control" name="monthly_visits" min="0" required/>
+                            </div>
+                            <small class="form-text text-muted">Promedio de visitas mensuales de los últimos 3 meses</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tasa de Conversión (%)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <input type="number" class="form-control" name="conversion_rate" min="0" max="100" step="0.01" required/>
+                            </div>
+                            <small class="form-text text-muted">Porcentaje de visitantes que realizan una acción deseada</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tiempo Promedio en Sitio (minutos)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                </div>
+                                <input type="number" class="form-control" name="avg_time_on_site" min="0" step="0.1" required/>
+                            </div>
+                            <small class="form-text text-muted">Tiempo promedio que los usuarios pasan en el sitio</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tasa de Rebote (%)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <input type="number" class="form-control" name="bounce_rate" min="0" max="100" step="0.01" required/>
+                            </div>
+                            <small class="form-text text-muted">Porcentaje de visitantes que abandonan sin interactuar</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas de Crecimiento -->
+            <div class="section-card">
+                <div class="section-title">
+                    <i class="fas fa-chart-line mr-2"></i>Métricas de Crecimiento
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tasa de Crecimiento Mensual (%)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <input type="number" class="form-control" name="monthly_growth_rate" min="0" step="0.01" required/>
+                            </div>
+                            <small class="form-text text-muted">Crecimiento promedio mensual de usuarios/ingresos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Usuarios Recurrentes (%)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <input type="number" class="form-control" name="recurring_users" min="0" max="100" step="0.01" required/>
+                            </div>
+                            <small class="form-text text-muted">Porcentaje de usuarios que regresan mensualmente</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Antigüedad del Activo (meses)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-history"></i></span>
+                                </div>
+                                <input type="number" class="form-control" name="asset_age" min="0" required/>
+                            </div>
+                            <small class="form-text text-muted">Tiempo desde que el activo fue creado</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Tiempo de Monetización (meses)</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                </div>
+                                <input type="number" class="form-control" name="monetization_age" min="0" required/>
+                            </div>
+                            <small class="form-text text-muted">Tiempo desde que comenzó a generar ingresos</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Botones de navegación -->
+    <div class="d-flex justify-content-between mb-5">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
+            <i class="fas fa-arrow-left"></i> Anterior
+        </button>
+        <div class="d-button-flex">
+            <button type="button" class="btn btn-light border-primary" id="saveDraftBtn">
+                <i class="fas fa-save"></i> Guardar Borrador
+            </button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='monetizacion.html'">
+                Siguiente <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="/wp-content/themes/blocksy-child/trestiq-auth/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/wp-content/themes/blocksy-child/trestiq-auth/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="barraprogreso.js"></script>
+</body>
+</html>

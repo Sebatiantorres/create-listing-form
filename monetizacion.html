@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
+        <title>Monetización - Trestiq Marketplace</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body id="page-top" class="page-monetizacion">
+        <!-- Progress Sidebar -->
+        <div class="progress-sidebar">
+            <div class="progress-line" style="height: 75%;"></div>
+            <div class="progress-dot" style="top: 0%">
+                <span class="progress-label">Información Básica</span>
+            </div>
+            <div class="progress-dot" style="top: 33.33%">
+                <span class="progress-label">Métricas</span>
+            </div>
+            <div class="progress-dot active" style="top: 66.66%">
+                <span class="progress-label">Monetización</span>
+            </div>
+            <div class="progress-dot" style="top: 100%">
+                <span class="progress-label">Configuración</span>
+            </div>
+        </div>
+
+        <div id="wrapper">
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-plus-circle fa-2x text-primary mr-2"></i>
+                            <div>
+                                <h1 class="h3 mb-0 text-gray-800">Monetización</h1>
+                                <small class="text-muted">Sistema de Publicación de Activos Digitales</small>
+                            </div>
+                        </div>
+                        <div class="ml-auto d-flex align-items-center">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">ID: <?php echo uniqid('LISTING-'); ?></span>
+                            <span class="badge badge-warning">
+                                <i class="fas fa-save mr-1"></i>
+                                Borrador
+                            </span>
+                        </div>
+                    </nav>
+
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="progress mb-3">
+                                            <div class="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="badge badge-primary step-badge" id="stepBadge1">Información Básica</span>
+                                            <span class="badge badge-primary step-badge" id="stepBadge2">Métricas</span>
+                                            <span class="badge badge-primary step-badge" id="stepBadge3">Monetización</span>
+                                            <span class="badge badge-light step-badge" id="stepBadge4">Configuración</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form id="monetizationForm">
+                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                    
+                                    <!-- Contenido del formulario de monetización -->
+                                    <div class="card shadow mb-4">
+                                        <div class="card-header py-3 d-flex align-items-center">
+                                            <i class="fas fa-dollar-sign fa-2x text-primary mr-2"></i>
+                                            <h6 class="m-0 font-weight-bold text-primary">Monetización</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Precio de Venta -->
+                                            <div class="section-card">
+                                                <div class="section-title">
+                                                    <i class="fas fa-tag mr-2"></i>Precio y Términos
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Precio de Venta (USD)</label>
+                                                            <div class="input-group precio-venta">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text simbolo-moneda">$</span>
+                                                                </div>
+                                                                <input type="number" class="form-control precio" name="selling_price" min="0" required/>
+                                                            </div>
+                                                            <small class="form-text text-muted">Precio al que deseas vender el activo</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Método de Pago Preferido</label>
+                                                            <select class="form-control" name="payment_method" required>
+                                                                <option value="">Seleccionar método...</option>
+                                                                <option value="escrow">Escrow</option>
+                                                                <option value="transferencia">Transferencia Bancaria</option>
+                                                                <option value="crypto">Criptomonedas</option>
+                                                            </select>
+                                                            <small class="form-text text-muted">Método de pago que prefieres para la transacción</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Términos de Pago</label>
+                                                            <select class="form-control" name="payment_terms" required>
+                                                                <option value="">Seleccionar términos...</option>
+                                                                <option value="total">Pago Total</option>
+                                                                <option value="parcial">Pago Parcial</option>
+                                                                <option value="financiado">Financiado</option>
+                                                            </select>
+                                                            <small class="form-text text-muted">Cómo prefieres recibir el pago</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Tiempo de Transferencia (días)</label>
+                                                            <input type="number" class="form-control" name="transfer_time" min="1" required/>
+                                                            <small class="form-text text-muted">Tiempo estimado para completar la transferencia</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Fuentes de Ingresos -->
+                                            <div class="section-card">
+                                                <div class="section-title">
+                                                    <i class="fas fa-money-bill-wave mr-2"></i>Fuentes de Ingresos
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label>Fuentes Principales de Ingresos</label>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="revenue_ads" name="revenue_sources[]" value="ads">
+                                                                <label class="custom-control-label" for="revenue_ads">Publicidad</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="revenue_subscriptions" name="revenue_sources[]" value="subscriptions">
+                                                                <label class="custom-control-label" for="revenue_subscriptions">Suscripciones</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="revenue_products" name="revenue_sources[]" value="products">
+                                                                <label class="custom-control-label" for="revenue_products">Venta de Productos</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="revenue_services" name="revenue_sources[]" value="services">
+                                                                <label class="custom-control-label" for="revenue_services">Servicios</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" id="revenue_affiliate" name="revenue_sources[]" value="affiliate">
+                                                                <label class="custom-control-label" for="revenue_affiliate">Marketing de Afiliados</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Detalles Adicionales -->
+                                            <div class="section-card">
+                                                <div class="section-title">
+                                                    <i class="fas fa-info-circle mr-2"></i>Detalles Adicionales
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Descripción de la Monetización</label>
+                                                    <textarea class="form-control" name="monetization_details" rows="4" required></textarea>
+                                                    <small class="form-text text-muted">Describe en detalle cómo se monetiza el activo actualmente</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botones de navegación -->
+                                    <div class="d-flex justify-content-between mb-5">
+                                        <button type="button" class="btn btn-secondary" onclick="window.location.href='metricas.html'">
+                                            <i class="fas fa-arrow-left"></i> Anterior
+                                        </button>
+                                        <div class="d-button-flex">
+                                            <button type="button" class="btn btn-light border-primary" id="saveDraftBtn">
+                                                <i class="fas fa-save"></i> Guardar Borrador
+                                            </button>
+                                            <button type="button" class="btn btn-primary" onclick="window.location.href='configuracion.html'">
+                                                Siguiente <i class="fas fa-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/wp-content/themes/blocksy-child/trestiq-auth/assets/vendor/jquery/jquery.min.js"></script>
+        <script src="/wp-content/themes/blocksy-child/trestiq-auth/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="barraprogreso.js"></script>
+    </body>
+</html>
