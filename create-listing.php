@@ -1,48 +1,3 @@
-<?php
-// Verificaciones de seguridad
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-require_once dirname(__FILE__) . '/../../includes/config.php';
-
-// Validar método de solicitud
-if (!in_array($_SERVER['REQUEST_METHOD'], ALLOWED_METHODS)) {
-    header('HTTP/1.1 405 Method Not Allowed');
-    exit('Método no permitido');
-}
-
-// Verificar origen de la solicitud
-if (!verify_request_origin()) {
-    header('HTTP/1.1 403 Forbidden');
-    exit('Origen no permitido');
-}
-
-// Verificar CSRF token
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !verify_csrf_token($_POST['csrf_token'])) {
-    header('HTTP/1.1 403 Forbidden');
-    exit('Token CSRF inválido');
-}
-
-// Verificar autenticación
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /login');
-    exit();
-}
-
-// Generar nuevo token CSRF si no existe o está expirado
-if (!isset($_SESSION['csrf_token']) ||
-    !isset($_SESSION['csrf_time']) ||
-    (time() - $_SESSION['csrf_time']) > CSRF_TIMEOUT) {
-    $_SESSION['csrf_token'] = regenerate_csrf_token();
-}
-
-// Headers de seguridad
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
-header('X-XSS-Protection: 1; mode=block');
-header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -65,915 +20,1336 @@ header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
     
     <style>
 
+      
+/* Estilos corporativos para Trestiq Marketplace */
+:root {
+--primary: #2c55a5;
+--primary-light: #3c6dd0;
+--primary-dark: #1a407a;
+--secondary: #4b9dd1;
+--success: #28a745;
+--warning: #ffc107;
+--danger: #dc3545;
+--light: #f8f9fa;
+--dark: #343a40;
+--gray: #6c757d;
+--gray-light: #e9ecef;
+--white: #ffffff;
+--black: #000000;
+--font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+--box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+--box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+--border-radius: 0.25rem;
+--transition: all 0.2s ease-in-out;
+}
 
-        /* Estilos corporativos para Trestiq Marketplace */
-        :root {
-            --primary: #2c55a5;
-            --primary-light: #3c6dd0;
-            --primary-dark: #1a407a;
-            --secondary: #4b9dd1;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --gray: #6c757d;
-            --gray-light: #e9ecef;
-            --white: #ffffff;
-            --black: #000000;
-            --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            --box-shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            --border-radius: 0.25rem;
-            --transition: all 0.2s ease-in-out;
-        }
+/* Reset y estilos generales */
+body {
+font-family: var(--font-main);
+color: var(--dark);
+background-color: #f7f9fc;
+line-height: 1.6;
+}
 
-        /* Reset y estilos generales */
-        body {
-            font-family: var(--font-main);
-            color: var(--dark);
-            background-color: #f7f9fc;
-            line-height: 1.6;
-        }
+h1, h2, h3, h4, h5, h6 {
+font-weight: 600;
+color: var(--dark);
+}
 
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-            color: var(--dark);
-        }
+/* Navegación */
+.navbar {
+border-bottom: 1px solid rgba(0,0,0,0.08);
+box-shadow: var(--box-shadow);
+background-color: var(--white);
+}
+
+/* Contenedor principal limitado - CLAVE PARA ARREGLAR EL ANCHO */
+.container-fluid {
+max-width: 1200px;
+margin: 0 auto;
+padding-left: 20px;
+padding-right: 20px;
+}
+
+/* IMPORTANTE: Limitar el ancho del formulario */
+.col-lg-8 {
+max-width: 800px;
+margin: 0 auto;
+}
+
+/* Mejoras para tarjetas */
+.card {
+border: none;
+border-radius: var(--border-radius);
+box-shadow: var(--box-shadow);
+transition: var(--transition);
+margin-bottom: 1.5rem;
+background-color: var(--white);
+}
+
+.card:hover {
+box-shadow: var(--box-shadow-lg);
+}
+
+.card-header {
+background-color: var(--white);
+border-bottom: 1px solid var(--gray-light);
+padding: 1rem 1.25rem;
+font-weight: 600;
+}
+
+.card-body {
+padding: 1.5rem;
+}
+
+/* NUEVA SECCIÓN: Agrupar secciones relacionadas */
+.metrics-group {
+border: 1px solid var(--gray-light);
+border-radius: 8px;
+padding: 1.5rem;
+margin-bottom: 2rem;
+background-color: white;
+box-shadow: var(--box-shadow);
+transition: var(--transition);
+}
+
+.metrics-group:hover {
+box-shadow: var(--box-shadow-lg);
+}
+
+.metrics-group-title {
+display: flex;
+align-items: center;
+font-size: 1.1rem;
+color: var(--primary);
+font-weight: 600;
+margin-bottom: 1.5rem;
+padding-bottom: 0.75rem;
+border-bottom: 2px solid var(--primary-light);
+}
+
+.metrics-group-title i {
+margin-right: 10px;
+color: var(--primary);
+}
+
+/* Secciones del formulario mejoradas */
+.section-card {
+background-color: var(--white);
+border-radius: 8px;
+padding: 1.5rem;
+margin-bottom: 1.5rem;
+border-left: 4px solid var(--primary);
+box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.section-card:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+/* Títulos de sección mejorados */
+.section-title {
+font-weight: 600;
+color: var(--primary);
+margin-bottom: 1.25rem;
+padding-bottom: 0.75rem;
+border-bottom: 1px solid var(--gray-light);
+display: flex;
+align-items: center;
+font-size: 1.15rem;
+}
+
+.section-title i {
+margin-right: 10px;
+color: var(--primary);
+}
+
+/* Campos de formulario mejorados */
+.form-group {
+margin-bottom: 2.5rem;
+position: relative;
+}
+
+.form-group label {
+font-weight: 500;
+margin-bottom: 0.5rem;
+color: var(--dark);
+display: block;
+font-size: 0.95rem;
+}
+
+.form-control {
+border: 1px solid #e4e6ef;
+border-radius: 6px;
+padding: 0.85rem 1rem;
+transition: all 0.2s ease-in-out;
+background-color: #f9fafc;
+width: 100%;
+font-size: 0.95rem;
+height: 50px; /* Altura fija para todos los inputs */
+}
+
+.form-control:focus {
+border-color: var(--primary-light);
+box-shadow: 0 0 0 0.25rem rgba(44, 85, 165, 0.15);
+background-color: var(--white);
+}
+
+.form-control:hover {
+border-color: var(--primary-light);
+background-color: #f5f7fc;
+}
+
+.form-control::placeholder {
+color: #adb5bd;
+opacity: 0.8;
+}
+
+/* Regla específica para textareas */
+textarea.form-control {
+min-height: 150px; /* Aumentar altura para área de descripción */
+height: auto;
+resize: vertical; /* Permitir al usuario ajustar si es necesario */
+}
+
+/* Mantener el estilo de validación original */
+.validation-message {
+display: none; /* Evitar mensajes duplicados de validación */
+}
+
+/* Mostrar solo el contador de caracteres */
+.character-counter {
+display: block; /* Asegurar que el contador siga visible */
+}
+
+
+/* MEJORADO: Input groups con mejor alineación */
+.input-group {
+position: relative;
+display: flex;
+flex-wrap: nowrap;
+align-items: center; /* Cambiado de stretch a center */
+width: 100%;
+margin-bottom: 0.25rem;
+}
+
+/* MEJORADO: Estilo consistente para el input-group-text con símbolos */
+.input-group-text {
+background-color: #f1f3f9;
+border: 1px solid #e4e6ef;
+display: flex;
+align-items: center;
+justify-content: center;
+min-width: 42px;
+height: 46px; /* Altura fija igual a los inputs */
+padding: 0 12px; /* Cambiado para ser más preciso */
+border-radius: 6px 0 0 6px;
+font-size: 0.9rem;
+font-weight: 500;
+color: var(--primary);
+line-height: 1; /* Añadido para mejor alineación */
+}
+
+/* Asegurar que el símbolo esté bien centrado */
+.input-group-text i,
+.input-group-text span {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100%;
+font-size: 0.85rem;
+}
+
+/* Si hay texto junto al icono, añadir margen específico */
+.input-group-text i + span {
+margin-left: 8px;
+}
+
+/* MEJORADO: Asegurar que el form-control en input-group se expande correctamente */
+.input-group > .form-control {
+position: relative;
+flex: 1 1 auto;
+width: 1%;
+min-width: 0;
+margin-bottom: 0;
+border-top-left-radius: 0;
+border-bottom-left-radius: 0;
+height: 46px; /* Añadido para asegurar altura consistente */
+line-height: 46px; /* Añadido para mejor alineación */
+}
+
+/* Estilo específico para el símbolo de moneda */
+.simbolo-moneda {
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 0 12px;
+font-weight: 500;
+height: 46px;
+line-height: 1;
+}
+
+/* MEJORADO: Ajuste específico para campos de precio */
+input[type="number"].form-control.precio {
+height: 46px;
+padding-top: 0;
+padding-bottom: 0;
+padding-right: 15px; /* Aumentado de 10px */
+padding-left: 10px; /* Añadido para más espacio */
+box-sizing: border-box;
+text-align: right;
+width: 100%; /* Asegurar que ocupe todo el espacio disponible */
+}
+
+
+/* MEJORADO: Específicamente para inputs de tipo date y number */
+input.form-control[type="date"],
+input.form-control[type="number"] {
+min-height: 46px; /* Altura consistente */
+padding-right: 10px;
+flex: 1;
+display: block;
+width: 100%;
+}
+
+/* NUEVA SECCIÓN: Mejorar la visualización de indicadores de validación */
+.valid-indicator {
+display: flex;
+align-items: center;
+font-size: 0.85rem;
+color: var(--success);
+margin-top: 0.5rem;
+}
+
+.valid-indicator i {
+margin-right: 5px;
+}
+
+/* CORRECCIÓN: Unificar estilos de validación y contadores de caracteres */
+.character-counter {
+font-size: 0.8rem;
+color: var(--gray);
+margin-top: 0.25rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+
+.character-counter .current {
+font-weight: 500;
+}
+
+.character-counter .limit {
+opacity: 0.8;
+}
+
+.validation-message {
+font-size: 0.85rem;
+margin-top: 0.4rem;
+padding-left: 0.25rem;
+border-left: 2px solid;
+}
+
+.validation-message.error {
+color: var(--danger);
+border-color: var(--danger);
+}
+
+.validation-message.warning {
+color: var(--warning);
+border-color: var(--warning);
+}
+
+.validation-message.success {
+color: var(--success);
+border-color: var(--success);
+}
+
+.validation-message.info {
+color: var(--primary);
+border-color: var(--primary);
+}
+
+.validation-help {
+font-size: 0.8rem;
+color: var(--gray);
+margin-top: 0.25rem;
+font-style: italic;
+}
+
+/* Badges y progress */
+.badge {
+padding: 0.5rem 0.75rem;
+font-weight: 500;
+border-radius: 4px;
+}
+
+.badge-primary {
+background-color: var(--primary);
+color: var(--white);
+}
+
+.badge-light {
+background-color: var(--gray-light);
+color: var(--gray);
+}
+
+.badge-warning {
+background-color: var(--warning);
+color: var(--dark);
+}
+
+.step-badge {
+transition: var(--transition);
+cursor: pointer;
+}
+
+.progress {
+height: 0.5rem;
+background-color: var(--gray-light);
+border-radius: var(--border-radius);
+margin-bottom: 1.5rem;
+overflow: hidden;
+}
+
+.progress-bar {
+background-color: var(--primary);
+transition: width 0.6s ease;
+}
+
+/* Botones mejorados */
+.btn {
+padding: 0.65rem 1.5rem;
+font-weight: 500;
+letter-spacing: 0.3px;
+border-radius: 6px;
+transition: all 0.25s ease;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+border: none;
+font-size: 0.95rem;
+box-shadow: 0 3px 5px rgba(0,0,0,0.05);
+height: 46px; /* Altura consistente con inputs */
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+border: none;
+color: white;
+}
+
+.btn-primary:hover {
+background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+transform: translateY(-2px);
+box-shadow: 0 5px 15px rgba(44, 85, 165, 0.3);
+}
+
+.btn-secondary {
+background-color: var(--gray);
+color: var(--white);
+}
+
+.btn-secondary:hover {
+background-color: #5a6268;
+color: var(--white);
+transform: translateY(-2px);
+}
+
+.btn-light {
+background-color: var(--light);
+border: 1px solid var(--gray-light);
+color: var(--dark);
+}
+
+.btn-light:hover {
+background-color: #e2e6ea;
+border-color: #dae0e5;
+}
+
+.btn i {
+margin-right: 8px;
+font-size: 0.9em;
+}
+
+/* Previsualización de imágenes */
+.image-preview {
+display: flex;
+flex-wrap: wrap;
+gap: 15px;
+margin-top: 15px;
+}
+
+.image-preview-item {
+position: relative;
+border: 1px solid var(--gray-light);
+border-radius: var(--border-radius);
+padding: 5px;
+display: inline-block;
+}
+
+.remove-image {
+position: absolute;
+top: -10px;
+right: -10px;
+background-color: var(--danger);
+color: white;
+border-radius: 50%;
+width: 22px;
+height: 22px;
+text-align: center;
+line-height: 22px;
+cursor: pointer;
+font-size: 12px;
+}
+
+/* Custom file input */
+.custom-file {
+position: relative;
+display: inline-block;
+width: 100%;
+height: 46px; /* Altura consistente */
+margin-bottom: 0;
+}
+
+.custom-file-input {
+position: relative;
+z-index: 2;
+width: 100%;
+height: 46px; /* Altura consistente */
+margin: 0;
+opacity: 0;
+}
+
+.custom-file-label {
+position: absolute;
+top: 0;
+right: 0;
+left: 0;
+z-index: 1;
+height: 46px; /* Altura consistente */
+padding: 0.85rem 1rem;
+font-weight: 400;
+line-height: 1.5;
+color: #495057;
+background-color: #fff;
+border: 1px solid #ced4da;
+border-radius: 6px;
+display: flex;
+align-items: center;
+}
+
+.custom-file-label::after {
+position: absolute;
+top: 0;
+right: 0;
+bottom: 0;
+z-index: 3;
+display: flex;
+align-items: center;
+justify-content: center;
+height: 100%;
+padding: 0 0.75rem;
+color: var(--white);
+content: "Examinar";
+background-color: var(--primary);
+border-left: inherit;
+border-radius: 0 6px 6px 0;
+}
+
+/* Custom checkboxes */
+.custom-control {
+position: relative;
+display: block;
+min-height: 1.5rem;
+padding-left: 1.5rem;
+margin-bottom: 1rem;
+}
+
+.custom-control-input {
+position: absolute;
+left: 0;
+z-index: -1;
+width: 1rem;
+height: 1.25rem;
+opacity: 0;
+}
+
+.custom-control-label {
+position: relative;
+margin-bottom: 0;
+vertical-align: top;
+cursor: pointer;
+padding-left: 10px;
+}
+
+.custom-control-label::before {
+position: absolute;
+top: 0.25rem;
+left: -1.5rem;
+display: block;
+width: 1rem;
+height: 1rem;
+pointer-events: none;
+content: "";
+background-color: #fff;
+border: 1px solid #adb5bd;
+border-radius: 0.25rem;
+}
+
+.custom-control-label::after {
+position: absolute;
+top: 0.25rem;
+left: -1.5rem;
+display: block;
+width: 1rem;
+height: 1rem;
+content: "";
+background: no-repeat 50% / 50% 50%;
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+background-color: var(--primary);
+border-color: var(--primary);
+}
+
+.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
+}
+
+/* Mensajes de ayuda */
+.help-text, .form-text.text-muted {
+color: var(--gray);
+font-size: 0.8rem;
+margin-top: 0.5rem;
+display: block;
+}
+
+/* Validación de formularios */
+.is-valid {
+border-color: var(--success);
+}
+
+.is-invalid {
+border-color: var(--danger);
+}
+
+.valid-feedback {
+color: var(--success);
+margin-top: 0.25rem;
+font-size: 0.8rem;
+display: flex;
+align-items: center;
+}
+
+.valid-feedback i {
+margin-right: 5px;
+}
+
+.invalid-feedback {
+color: var(--danger);
+margin-top: 0.25rem;
+font-size: 0.8rem;
+display: flex;
+align-items: center;
+display: block;
+}
+
+.invalid-feedback i {
+margin-right: 5px;
+}
+
+/* MEJORADO: Arreglar la visualización de input-group-prepend */
+.input-group-prepend {
+display: flex;
+margin-right: -1px;
+}
+
+.input-group-prepend .input-group-text {
+border-top-right-radius: 0;
+border-bottom-right-radius: 0;
+}
+
+/* MEJORADO: Mejorar la apariencia del campo de precio */
+.input-group-prepend + .form-control {
+border-top-left-radius: 0;
+border-bottom-left-radius: 0;
+}
+
+/* MEJORADO: Eliminar efectos no deseados en navegadores webkit */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+
+/* Firefox input number */
+input[type="number"] {
+-moz-appearance: textfield;
+}
+
+/* MEJORADO: Mejorar la visualización de inputs de tipo date en diferentes navegadores */
+input[type="date"]::-webkit-calendar-picker-indicator {
+opacity: 1;
+display: block;
+background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%232c55a5" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+width: 20px;
+height: 20px;
+cursor: pointer;
+}
+
+/* AÑADIDO: Tooltip para campos informativos */
+.tooltip-icon {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: var(--gray-light);
+color: var(--gray);
+font-size: 10px;
+margin-left: 5px;
+cursor: help;
+}
+
+.tooltip-icon:hover {
+background-color: var(--primary-light);
+color: var(--white);
+}
+
+
+/* CORREGIDO: Aumentar el ancho del campo de precio y mantener tamaño consistente */
+.input-group.precio-venta {
+    max-width: 450px;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    display: flex; /* Cambiado a flex para mantener elementos en línea */
+    flex-direction: row; /* Asegurar dirección horizontal */
+}
+
+/* MEJORADO: Contenedor para el grupo de precio */
+.precio-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+/* MEJORADO: Estilo para el input group */
+.precio-container .input-group {
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: stretch;
+}
+
+/* MEJORADO: Estilo para el símbolo de moneda */
+.input-group-text.simbolo-moneda {
+    min-width: 60px;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 1.2rem;
+    background-color: #f1f3f9;
+    height: 56px;
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e4e6ef;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+}
+
+/* MEJORADO: Estilo específico para el input de precio */
+.input-group.precio-venta .form-control {
+    height: 56px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    min-width: 200px;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    transition: all 0.2s ease-in-out;
+    border-radius: 0 6px 6px 0;
+    border: 1px solid #e4e6ef;
+    flex: 1;
+}
+
+/* MEJORADO: Espaciado y estilo para mensajes de error */
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #fff8f8;
+    border-left: 3px solid var(--danger);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #dc3545;
+    position: relative;
+    clear: both;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* MEJORADO: Espaciado y estilo para mensajes de éxito */
+.valid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #f8fff9;
+    border-left: 3px solid var(--success);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #28a745;
+    position: relative;
+    clear: both;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* AÑADIDO: Asegurar que el input-group-prepend se mantenga en línea */
+.input-group-prepend {
+    display: flex;
+    margin-right: 0;
+}
+
+#content {
+flex: 1 0 auto;
+}
+
+/* MEJORADO: Añadir soporte para Firefox input date */
+@-moz-document url-prefix() {
+input[type="date"] {
+padding-top: 0.7rem;
+padding-bottom: 0.7rem;
+}
+}
+
+/* AÑADIDO: Espaciado entre campos relacionados */
+.form-row {
+display: flex;
+flex-wrap: wrap;
+margin-right: -10px;
+margin-left: -10px;
+}
+
+.form-row > .col,
+.form-row > [class*="col-"] {
+padding-right: 10px;
+padding-left: 10px;
+}
+
+/* AÑADIDO: Mejor separación entre secciones */
+hr.section-divider {
+margin-top: 2rem;
+margin-bottom: 2rem;
+border: 0;
+border-top: 1px solid var(--gray-light);
+}
+
+/* AÑADIDO: Estilo para subtítulos de sección */
+.subsection-title {
+font-size: 1rem;
+color: var(--gray);
+margin-bottom: 1rem;
+font-weight: 500;
+}
+
+/* Estilos personalizados para input de tipo date */
+input[type="date"] {
+    position: relative;
+    padding-right: 30px;
+    cursor: pointer;
+    background-color: #f9fafc !important;
+    border: 1px solid #e4e6ef;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    font-family: var(--font-main);
+    color: var(--dark);
+    font-size: 0.95rem;
+    height: 46px;
+    /* Ocultar íconos por defecto del navegador */
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
+}
+
+/* Eliminar todos los íconos de validación */
+input[type="date"]::-ms-clear,
+input[type="date"]::-ms-reveal,
+input[type="date"]::-webkit-search-decoration,
+input[type="date"]::-webkit-search-cancel-button,
+input[type="date"]::-webkit-search-results-button,
+input[type="date"]::-webkit-search-results-decoration,
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button,
+input[type="date"]::-webkit-validation-marker {
+    display: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Eliminar específicamente el ícono de validación de Bootstrap */
+input[type="date"].form-control:valid,
+input[type="date"].form-control:invalid {
+    background-image: none !important;
+    padding-right: 30px !important;
+}
+
+input[type="date"].is-valid,
+input[type="date"].is-invalid {
+    background-image: none !important;
+    border-color: #e4e6ef !important;
+}
+
+/* Restaurar el borde rojo solo cuando hay error de validación */
+input[type="date"].is-invalid {
+    border-color: var(--danger) !important;
+}
+
+/* Estilo para el icono del calendario */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c55a5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+input[type="date"]::-webkit-datetime-edit {
+    padding: 0 0.5rem;
+}
+
+/* Asegurar que no haya íconos de validación en estados específicos */
+.was-validated input[type="date"]:valid,
+.was-validated input[type="date"]:invalid,
+input[type="date"].is-valid,
+input[type="date"].is-invalid {
+    background-image: none !important;
+    padding-right: 30px !important;
+}
+
+input[type="date"]:hover {
+    border-color: var(--primary-light);
+    background-color: #f5f7fc;
+}
+
+input[type="date"]:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(44, 85, 165, 0.15);
+    background-color: var(--white);
+    outline: none;
+}
+
+/* Estilo para el icono del calendario */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c55a5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+input[type="date"]::-webkit-datetime-edit {
+    padding: 0 0.5rem;
+}
+
+/* Asegurar que no haya íconos de validación en estados específicos */
+.was-validated input[type="date"]:valid,
+.was-validated input[type="date"]:invalid,
+input[type="date"].is-valid,
+input[type="date"].is-invalid {
+    background-image: none !important;
+    padding-right: 30px !important;
+}
+
+// ... existing code ...
+
+/* Estilo para el estado válido */
+input[type="date"].is-valid {
+    border-color: var(--success);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* CORREGIDO: Estructura del contenedor de precio */
+.precio-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* MEJORADO: Grupo de input de precio */
+.input-group.precio-venta {
+    max-width: 450px;
+    width: 100%;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch;
+}
+
+/* MEJORADO: Contenedor específico para mensajes de error */
+.error-container {
+    max-width: 450px;
+    width: 100%;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+/* MEJORADO: Estilo para mensajes de error */
+.invalid-feedback {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+    padding: 0.75rem 1rem;
+    background-color: #fff8f8;
+    border-left: 3px solid var(--danger);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #dc3545;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    float: none !important;
+    clear: both !important;
+}
+
+/* MEJORADO: Estilo para el input de precio */
+.input-group.precio-venta .form-control {
+    height: 56px;
+    font-size: 1.2rem;
+    font-weight: 500;
+    min-width: 200px;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    transition: all 0.2s ease-in-out;
+    border-radius: 0 6px 6px 0;
+    border: 1px solid #e4e6ef;
+    flex: 1;
+}
+
+/* MEJORADO: Asegurar que el prepend se mantenga en línea */
+.input-group-prepend {
+    display: flex !important;
+    margin-right: 0;
+}
+
+/* AÑADIDO: Forzar que los mensajes de error estén debajo */
+.precio-container > * {
+    width: 100%;
+}
+
+.precio-container .input-group + .invalid-feedback,
+.precio-container .input-group + .valid-feedback {
+    display: block !important;
+    position: static !important;
+    margin-top: 0.5rem !important;
+    float: none !important;
+    clear: both !important;
+}
+
+/* Estilos para el campo de precio */
+.precio-container {
+    position: relative;
+    max-width: 450px;
+}
+
+.input-group.precio-venta {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.input-group-text.simbolo-moneda {
+    width: 50px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f3f9;
+    border: 1px solid #e4e6ef;
+    border-right: none;
+    border-radius: 6px 0 0 6px;
+}
+
+.input-group.precio-venta .form-control {
+    height: 46px;
+    border-radius: 0 6px 6px 0;
+    font-size: 1rem;
+}
+
+/* Mensaje de error */
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: #fff8f8;
+    border-left: 3px solid #dc3545;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #dc3545;
+}
+
+.form-group .precio-container {
+    position: relative;
+    display: block;
+    max-width: 450px;
+}
+
+.form-group .precio-container .input-group.precio-venta {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.form-group .precio-container .input-group-prepend {
+    display: flex;
+    margin-right: 0;
+}
+
+.form-group .precio-container .input-group-text.simbolo-moneda {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    background-color: #f1f3f9;
+    border: 1px solid #e4e6ef;
+    border-right: 0;
+    border-radius: 6px 0 0 6px;
+}
+
+.form-group .precio-container .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    height: 46px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    border: 1px solid #e4e6ef;
+    border-radius: 0 6px 6px 0;
+}
+
+/* Mensaje de error con máxima especificidad */
+.form-group .precio-container .invalid-feedback {
+    display: block !important;
+    width: 100% !important;
+    margin: 0.5rem 0 0 0 !important;
+    padding: 0.75rem !important;
+    font-size: 0.875rem !important;
+    color: #dc3545 !important;
+    background-color: #fff8f8 !important;
+    border-left: 3px solid #dc3545 !important;
+    border-radius: 4px !important;
+    position: static !important;
+    float: none !important;
+    clear: both !important;
+}
+
+/* Asegurar que el mensaje de error esté debajo */
+.form-group .precio-container > .invalid-feedback {
+    order: 2 !important;
+}
+
+/* Texto de ayuda */
+.form-group .precio-container .help-text {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Progress Bar Container */
+.form-progress-container {
+    width: 100%;
+    margin: 2rem auto;
+    position: relative;
+}
+
+/* Progress Bar Base */
+.form-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin-bottom: 2rem;
+    max-width: 100%;
+    padding: 0 1rem;
+}
+
+/* Progress Line */
+.progress-line {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 3px;
+    background: var(--gray-light);
+    width: 100%;
+    z-index: 1;
+}
+
+/* Active Progress Line */
+.progress-line-active {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 3px;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+    z-index: 2;
+}
+
+/* Step Indicators */
+.step-indicator {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 3px solid var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--gray);
+    position: relative;
+    z-index: 3;
+    transition: all 0.3s ease;
+}
+
+/* Active Step */
+.step-indicator.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* Completed Step */
+.step-indicator.completed {
+    border-color: var(--success);
+    background: var(--success);
+    color: var(--white);
+}
+
+/* Step Labels */
+.step-label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--gray);
+    white-space: nowrap;
+    text-align: center;
+    width: max-content;
+    font-weight: 500;
+}
+
+/* Active Step Label */
+.step-indicator.active + .step-label {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .step-label {
+        font-size: 0.75rem;
+    }
+    
+    .step-indicator {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-progress {
+        padding: 0 0.5rem;
+    }
+    
+    .step-label {
+        display: none;
+    }
+    
+    .step-indicator {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+    }
+    
+    /* Mostrar label del paso activo en móvil */
+    .step-indicator.active + .step-label {
+        display: block;
+        font-size: 0.7rem;
+    }
+}
+
+/* Animaciones */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.step-indicator.active {
+    animation: pulse 2s infinite;
+}
+
+.btn .fa-arrow-right {
+    padding-top: 3px;
+    padding-left: 0.7em;
+    font-size: 0.9em;
+}
+
+.btn .fa-save {
+    padding-right: 0.7em;
+}
+
+.btn .fa-arrow-left {
+    padding-right: 0.7em;
+}
         
-        
-        /* Navegación */
-        .navbar {
-            border-bottom: 1px solid rgba(0,0,0,0.08);
-            box-shadow: var(--box-shadow);
-            background-color: var(--white);
-        }
-
-        /* Contenedor principal limitado - CLAVE PARA ARREGLAR EL ANCHO */
-        .container-fluid {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-
-        /* IMPORTANTE: Limitar el ancho del formulario */
-        .col-lg-8 {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Mejoras para tarjetas */
-        .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-            margin-bottom: 1.5rem;
-            background-color: var(--white);
-        }
-
-        .card:hover {
-            box-shadow: var(--box-shadow-lg);
-        }
-
-        .card-header {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--gray-light);
-            padding: 1rem 1.25rem;
-            font-weight: 600;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        /* NUEVA SECCIÓN: Agrupar secciones relacionadas */
-        .metrics-group {
-            border: 1px solid var(--gray-light);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            background-color: white;
-            box-shadow: var(--box-shadow);
-            transition: var(--transition);
-        }
-
-        .metrics-group:hover {
-            box-shadow: var(--box-shadow-lg);
-        }
-
-        .metrics-group-title {
-            display: flex;
-            align-items: center;
-            font-size: 1.1rem;
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--primary-light);
-        }
-
-        .metrics-group-title i {
-            margin-right: 10px;
-            color: var(--primary);
-        }
-
-        /* Secciones del formulario mejoradas */
-        .section-card {
-            background-color: var(--white);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .section-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-        }
-
-        /* Títulos de sección mejorados */
-        .section-title {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--gray-light);
-            display: flex;
-            align-items: center;
-            font-size: 1.15rem;
-        }
-
-        .section-title i {
-            margin-right: 10px;
-            color: var(--primary);
-        }
-
-        /* Campos de formulario mejorados */
-        .form-group {
-            margin-bottom: 2.5rem;
-            position: relative;
-        }
-
-        .form-group label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-            display: block;
-            font-size: 0.95rem;
-        }
-
-        .form-control {
-            border: 1px solid #e4e6ef;
-            border-radius: 6px;
-            padding: 0.85rem 1rem;
-            transition: all 0.2s ease-in-out;
-            background-color: #f9fafc;
-            width: 100%;
-            font-size: 0.95rem;
-            height: 52px; /* Altura fija para todos los inputs */
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 0.25rem rgba(44, 85, 165, 0.15);
-            background-color: var(--white);
-        }
-
-        .form-control:hover {
-            border-color: var(--primary-light);
-            background-color: #f5f7fc;
-        }
-
-        .form-control::placeholder {
-            color: #adb5bd;
-            opacity: 0.8;
-        }
-
-        /* Regla específica para textareas */
-        textarea.form-control {
-            min-height: 150px; /* Aumentar altura para área de descripción */
-            height: auto;
-            resize: vertical; /* Permitir al usuario ajustar si es necesario */
-        }
-
-        /* Mantener el estilo de validación original */
-        .validation-message {
-            display: none; /* Evitar mensajes duplicados de validación */
-        }
-
-        /* Mostrar solo el contador de caracteres */
-        .character-counter {
-            display: block; /* Asegurar que el contador siga visible */
-        }
-
-
-        /* MEJORADO: Input groups con mejor alineación */
-        .input-group {
-            position: relative;
-            display: flex;
-            flex-wrap: nowrap;
-            align-items: center; /* Cambiado de stretch a center */
-            width: 100%;
-            margin-bottom: 0.25rem;
-        }
-
-        /* MEJORADO: Estilo consistente para el input-group-text con símbolos */
-        .input-group-text {
-            background-color: #f1f3f9;
-            border: 1px solid #e4e6ef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 42px;
-            height: 46px; /* Altura fija igual a los inputs */
-            padding: 0 12px; /* Cambiado para ser más preciso */
-            border-radius: 6px 0 0 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--primary);
-            line-height: 1; /* Añadido para mejor alineación */
-        }
-
-        /* Asegurar que el símbolo esté bien centrado */
-        .input-group-text i,
-        .input-group-text span {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            font-size: 0.85rem;
-        }
-
-        /* Si hay texto junto al icono, añadir margen específico */
-        .input-group-text i + span {
-            margin-left: 8px;
-        }
-
-        /* MEJORADO: Asegurar que el form-control en input-group se expande correctamente */
-        .input-group > .form-control {
-            position: relative;
-            flex: 1 1 auto;
-            width: 1%;
-            min-width: 0;
-            margin-bottom: 0;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            height: 46px; /* Añadido para asegurar altura consistente */
-            line-height: 46px; /* Añadido para mejor alineación */
-        }
-
-        /* Estilo específico para el símbolo de moneda */
-        .simbolo-moneda {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 12px;
-            font-weight: 500;
-            height: 46px;
-            line-height: 1;
-        }
-
-        /* MEJORADO: Ajuste específico para campos de precio */
-        input[type="text"].form-control.precio {
-            height: 46px;
-            padding: 0.375rem 0.75rem; /* Usar el padding estándar de Bootstrap */
-            box-sizing: border-box;
-            text-align: left; /* Alineación a la izquierda como los demás campos */
-            width: 100%; /* Asegurar que ocupe todo el espacio disponible */
-        }
-
-
-        /* MEJORADO: Específicamente para inputs de tipo date y number */
-        input.form-control[type="date"],
-        input.form-control[type="number"] {
-            min-height: 46px; /* Altura consistente */
-            padding-right: 10px;
-            flex: 1;
-            display: block;
-            width: 100%;
-        }
-
-        /* NUEVA SECCIÓN: Mejorar la visualización de indicadores de validación */
-        .valid-indicator {
-            display: flex;
-            align-items: center;
-            font-size: 0.85rem;
-            color: var(--success);
-            margin-top: 0.5rem;
-        }
-
-        .valid-indicator i {
-            margin-right: 5px;
-        }
-
-        /* CORRECCIÓN: Unificar estilos de validación y contadores de caracteres */
-        .character-counter {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 0.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .character-counter .current {
-            font-weight: 500;
-        }
-
-        .character-counter .limit {
-            opacity: 0.8;
-        }
-
-        .validation-message {
-            font-size: 0.85rem;
-            margin-top: 0.4rem;
-            padding-left: 0.25rem;
-            border-left: 2px solid;
-        }
-
-        .validation-message.error {
-            color: var(--danger);
-            border-color: var(--danger);
-        }
-
-        .validation-message.warning {
-            color: var(--warning);
-            border-color: var(--warning);
-        }
-
-        .validation-message.success {
-            color: var(--success);
-            border-color: var(--success);
-        }
-
-        .validation-message.info {
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .validation-help {
-            font-size: 0.8rem;
-            color: var(--gray);
-            margin-top: 0.25rem;
-            font-style: italic;
-        }
-
-        /* Badges y progress */
-        .badge {
-            padding: 0.5rem 0.75rem;
-            font-weight: 500;
-            border-radius: 4px;
-        }
-
-        .badge-primary {
-            background-color: var(--primary);
-            color: var(--white);
-        }
-
-        .badge-light {
-            background-color: var(--gray-light);
-            color: var(--gray);
-        }
-
-        .badge-warning {
-            background-color: var(--warning);
-            color: var(--dark);
-        }
-
-        .step-badge {
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .progress {
-            height: 0.5rem;
-            background-color: var(--gray-light);
-            border-radius: var(--border-radius);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            background-color: var(--primary);
-            transition: width 0.6s ease;
-        }
-
-        /* Botones mejorados */
-        .btn {
-            padding: 0.65rem 1.5rem;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            border-radius: 6px;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            font-size: 0.95rem;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.05);
-            height: 46px; /* Altura consistente con inputs */
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            border: none;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(44, 85, 165, 0.3);
-        }
-
-        .btn-secondary {
-            background-color: var(--gray);
-            color: var(--white);
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            color: var(--white);
-            transform: translateY(-2px);
-        }
-
-        .btn-light {
-            background-color: var(--light);
-            border: 1px solid var(--gray-light);
-            color: var(--dark);
-        }
-
-        .btn-light:hover {
-            background-color: #e2e6ea;
-            border-color: #dae0e5;
-        }
-
-        .btn .fa-arrow-right {
-            padding-top: 3px;
-            padding-left: 0.7em;
-            font-size: 0.9em;
-        }
-
-        .btn .fa-save {
-            padding-right: 0.7em;
-        }
-
-        .btn .fa-arrow-left {
-            padding-right: 0.7em;
-        }
-
-        /* Previsualización de imágenes */
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .image-preview-item {
-            position: relative;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 5px;
-            display: inline-block;
-        }
-
-        .remove-image {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            text-align: center;
-            line-height: 22px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* Custom file input */
-        .custom-file {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-            height: 46px; /* Altura consistente */
-            margin-bottom: 0;
-        }
-
-        .custom-file-input {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 46px; /* Altura consistente */
-            margin: 0;
-            opacity: 0;
-        }
-
-        .custom-file-label {
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            z-index: 1;
-            height: 46px; /* Altura consistente */
-            padding: 0.85rem 1rem;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-color: #fff;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-        }
-
-        .custom-file-label::after {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 0 0.75rem;
-            color: var(--white);
-            content: "Examinar";
-            background-color: var(--primary);
-            border-left: inherit;
-            border-radius: 0 6px 6px 0;
-        }
-
-        /* Custom checkboxes */
-        .custom-control {
-            position: relative;
-            display: block;
-            min-height: 1.5rem;
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .custom-control-input {
-            position: absolute;
-            left: 0;
-            z-index: -1;
-            width: 1rem;
-            height: 1.25rem;
-            opacity: 0;
-        }
-
-        .custom-control-label {
-            position: relative;
-            margin-bottom: 0;
-            vertical-align: top;
-            cursor: pointer;
-            padding-left: 10px;
-        }
-
-        .custom-control-label::before {
-            position: absolute;
-            top: 0.25rem;
-            left: -1.5rem;
-            display: block;
-            width: 1rem;
-            height: 1rem;
-            pointer-events: none;
-            content: "";
-            background-color: #fff;
-            border: 1px solid #adb5bd;
-            border-radius: 0.25rem;
-        }
-
-        .custom-control-label::after {
-            position: absolute;
-            top: 0.25rem;
-            left: -1.5rem;
-            display: block;
-            width: 1rem;
-            height: 1rem;
-            content: "";
-            background: no-repeat 50% / 50% 50%;
-        }
-
-        .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e");
-        }
-
-        /* Mensajes de ayuda */
-        .help-text, .form-text.text-muted {
-            color: var(--gray);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            display: block;
-        }
-
-        /* Validación de formularios */
-        .is-valid {
-            border-color: var(--success);
-        }
-
-        .is-invalid {
-            border-color: var(--danger);
-        }
-
-        .valid-feedback, .feedback-message.valid-feedback {
-            color: var(--success);
-            margin-top: 0.25rem;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            padding: 0.25rem 0;
-        }
-
-        .valid-feedback i, .feedback-message.valid-feedback i {
-            margin-right: 5px;
-        }
-
-        .invalid-feedback, .feedback-message.invalid-feedback {
-            color: var(--danger);
-            margin-top: 0.25rem;
-            font-size: 0.8rem;
-            display: block;
-            padding: 0.25rem 0;
-        }
-
-        .invalid-feedback i, .feedback-message.invalid-feedback i {
-            margin-right: 5px;
-        }
-
-        /* Estilo específico para mensajes de feedback */
-        .feedback-message {
-            clear: both;
-            width: 100%;
-        }
-
-        /* Estilo específico para campos de múltiplos */
-        input[name="revenue_multiple"],
-        input[name="profit_multiple"] {
-            text-align: left;
-            font-weight: normal;
-            color: var(--dark);
-        }
-
-        /* MEJORADO: Arreglar la visualización de input-group-prepend */
-        .input-group-prepend {
-            display: flex;
-            margin-right: -1px;
-        }
-
-        .input-group-prepend .input-group-text {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        /* MEJORADO: Mejorar la apariencia del campo de precio */
-        .input-group-prepend + .form-control {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        /* MEJORADO: Eliminar efectos no deseados en navegadores webkit */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* Firefox input number */
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-
-        /* Mejoras para el campo de imágenes */
-        .file-upload-container {
-            border: 2px dashed #e4e6ef;
-            border-radius: 8px;
-            padding: 1rem;
-            background-color: #f9fafc;
-            transition: all 0.2s ease;
-        }
-
-        .file-upload-container:hover {
-            border-color: var(--primary-light);
-            background-color: #f5f7fc;
-        }
-
-        .image-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .image-preview-item {
-            position: relative;
-            border: 1px solid var(--gray-light);
-            border-radius: var(--border-radius);
-            padding: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .image-preview-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .image-preview-item img {
-            border-radius: 4px;
-        }
-
-        .remove-image {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background-color: var(--danger);
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }
-
-        .remove-image:hover {
-            transform: scale(1.1);
-            background-color: #c82333;
-        }
-
-        /* MEJORADO: Mejorar la visualización de inputs de tipo date en diferentes navegadores */
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            opacity: 1;
-            display: block;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%232c55a5" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        /* AÑADIDO: Tooltip para campos informativos */
-        .tooltip-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: var(--gray-light);
-            color: var(--gray);
-            font-size: 10px;
-            margin-left: 5px;
-            cursor: help;
-        }
-
-        .tooltip-icon:hover {
-            background-color: var(--primary-light);
-            color: var(--white);
-        }
-
-
-        /* CORREGIDO: Aumentar el ancho del campo de precio */
-        .input-group.precio-venta {
-            max-width: 100%; /* Cambiado a 100% para que ocupe todo el ancho disponible */
-        }
-
-        /* MEJORADO: Estilo para el símbolo de moneda */
-        .input-group-text.simbolo-moneda {
-            min-width: 45px; /* Aumentado de 35px */
-            justify-content: center;
-            font-weight: 500;
-            font-size: 1rem; /* Añadido para mejor visibilidad */
-        }
-
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .section-card,
-            .metrics-group {
-                padding: 1rem;
-            }
-
-            .card-body {
-                padding: 1.25rem;
-            }
-
-            .btn {
-                padding: 0.4rem 1rem;
-            }
-
-            /* Mantener el formulario centrado en móviles */
-            .container-fluid {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-
-            /* MEJORADO: Mejorar visualización de input-group en móviles */
-            .input-group {
-                flex-wrap: nowrap;
-            }
-
-            .input-group-text {
-                padding: 0.6rem;
-            }
-
-            /* AÑADIDO: Mejorar disposición de labels en móviles */
-            .form-group label {
-                font-size: 0.9rem;
-            }
-
-            /* AÑADIDO: Reducir espacio entre grupos en móviles */
-            .form-group {
-                margin-bottom: 2rem;
-            }
-        }
-
-        #step3 .card-body {
-            padding: 1.25rem;
-        }
-        /* Ajustes para pantallas muy grandes */
-        @media (min-width: 1600px) {
-            .container-fluid {
-                max-width: 1400px;
-            }
-
-            .col-lg-8 {
-                max-width: 900px;
-            }
-        }
-
-        /* Ajustes para el contenedor principal */
-        #wrapper {
-            display: flex;
-        }
-
-        #content-wrapper {
-            width: 100%;
-            overflow-x: hidden;
-            background-color: #f7f9fc;
-        }
-
-        #content {
-            flex: 1 0 auto;
-        }
-
-        /* MEJORADO: Añadir soporte para Firefox input date */
-        @-moz-document url-prefix() {
-            input[type="date"] {
-                padding-top: 0.7rem;
-                padding-bottom: 0.7rem;
-            }
-        }
-
-        /* AÑADIDO: Espaciado entre campos relacionados */
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-right: -10px;
-            margin-left: -10px;
-        }
-
-        .form-row > .col,
-        .form-row > [class*="col-"] {
-            padding-right: 10px;
-            padding-left: 10px;
-        }
-
-        /* AÑADIDO: Mejor separación entre secciones */
-        hr.section-divider {
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-            border: 0;
-            border-top: 1px solid var(--gray-light);
-        }
-
-        /* AÑADIDO: Estilo para subtítulos de sección */
-        .subsection-title {
-            font-size: 1rem;
-            color: var(--gray);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
     </style>
 </head>
 <body id="page-top">
-<div id="wrapper" class="mt-3">
+<div id="wrapper" style="margin-top: 70px;">
 
 
     <div id="content-wrapper" class="d-flex flex-column">
@@ -1128,11 +1504,11 @@ Borrador
                                                         <label>Fecha de Creación</label>
                                                         <div class="input-group">
                                                             <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-calendar-alt"></i>
-                        </span>
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-calendar-alt"></i>
+                                                                </span>
                                                             </div>
-                                                            <input type="date" class="form-control" name="creation_date" required>
+                                                            <input type="date" id="fechaInput" class="form-control" name="creation_date" required>
                                                         </div>
                                                         <small class="help-text">Fecha en que se creó originalmente la propiedad</small>
                                                     </div>
@@ -1142,9 +1518,9 @@ Borrador
                                                         <label>Precio de Venta (USD)</label>
                                                         <div class="input-group precio-venta">
                                                             <div class="input-group-prepend">
-                        <span class="input-group-text simbolo-moneda">
-                            <i class="fas fa-dollar-sign"></i>
-                        </span>
+                                                                <span class="input-group-text simbolo-moneda">
+                                                                    <i class="fas fa-dollar-sign"></i>
+                                                                </span>
                                                             </div>
                                                             <input type="text" class="form-control precio" name="price" required min="0" step="0.01" placeholder="Ej: 4500.00">
                                                         </div>
@@ -1710,6 +2086,7 @@ Borrador
 
                                     setupRealTimeValidation: function() {
                                         this.setupMetricsValidation();
+                                        this.setupDateValidation();
                                         this.setupTitleValidation();
                                         this.setupDescriptionValidation();
                                         this.setupUrlValidation();
@@ -2024,6 +2401,10 @@ Borrador
                                             profitMultipleInput.closest('.form-group').append(`<div class="feedback-message valid-feedback"><i class="fas fa-check"></i> Múltiplo de beneficios: ${profitMultipleFormatted}</div>`);
                                         }
 
+                                        const inputFecha = document.getElementById("fechaInput").value;
+
+
+
                                         return true;
                                     },
 
@@ -2224,7 +2605,13 @@ Borrador
                                     },
 
                                     validateStep1: function() {
-                                        let isValid = true;
+                                        var isValid = true;
+                                        
+                                        // Validar fecha
+                                        if (!this.updateDateValidation()) {
+                                            isValid = false;
+                                        }
+
                                         const title = $('input[name="title"]');
                                         const description = $('textarea[name="description"]');
                                         const categoryId = $('#propertyType').val();
@@ -2598,6 +2985,48 @@ Borrador
                                                 }
                                             });
                                         }
+                                    },
+
+                                    updateDateValidation: function() {
+                                        // Remover mensajes previos
+                                        $('.feedback-message').remove();
+                                        
+                                        var dateInput = $('#fechaInput');
+                                        var selectedDate = new Date(dateInput.val());
+                                        var today = new Date();
+                                        today.setHours(0, 0, 0, 0);
+
+                                        // Si el campo está vacío, mostrar error
+                                        if (!dateInput.val()) {
+                                            dateInput.removeClass('is-valid').addClass('is-invalid');
+                                            dateInput.closest('.input-group').after('<div class="feedback-message invalid-feedback">Debe ingresar una fecha válida</div>');
+                                            return false;
+                                        }
+
+                                        // Si la fecha es futura, mostrar error
+                                        if (selectedDate > today) {
+                                            dateInput.removeClass('is-valid').addClass('is-invalid');
+                                            dateInput.closest('.input-group').after('<div class="feedback-message invalid-feedback">La fecha no puede ser futura</div>');
+                                            return false;
+                                        }
+
+                                        // Si la fecha es válida
+                                        dateInput.removeClass('is-invalid').addClass('is-valid');
+                                        return true;
+                                    },
+
+                                    setupDateValidation: function() {
+                                        var self = this;
+                                        
+                                        // Validar al cargar la página si hay una fecha
+                                        if ($('#fechaInput').val()) {
+                                            self.updateDateValidation();
+                                        }
+
+                                        // Validar en tiempo real al cambiar la fecha
+                                        $('#fechaInput').on('change input', function() {
+                                            self.updateDateValidation();
+                                        });
                                     }
                                 };
 
